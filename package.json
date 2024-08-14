@@ -1,0 +1,12 @@
+{
+  "name": "integral",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "c:build": "emcc integral.c -o integral.js -s NO_EXIT_RUNTIME=1 -s EXPORTED_RUNTIME_METHODS=[ccall]"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

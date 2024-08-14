@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test</title>
+  </head>
+  <body></body>
+  <!-- <script type="module">
+    async function init() {
+      const { instance } = await WebAssembly.instantiateStreaming(
+        fetch("./integral.wasm"),
+        {
+          f: (x) => x * x,
+        }
+      );
+      console.log(instance.exports.integral(4, 1, 11));
+    }
+    init();
+  </script> -->
+  <button id="btn">btn</button>
+  <script src="integral.js"></script>
+
+  <script>
+    document.querySelector("#btn").addEventListener("click", () => {
+      function integral(lowerLimit, upperLimit, n = 10) {
+        return Module.ccall(
+          "integral",
+          "number",
+          ["number", "number", "number"],
+          [lowerLimit, upperLimit, n]
+        );
+      }
+
+      const date = Date.now();
+      //   for (let index = 2; index < 1003; index++) {
+      //     integral(1, index, 10);
+      //   }
+
+      Module.ccall("main", "number", null, null);
+
+      console.log(Date.now() - date);
+
+      const EPSILON = 0.0001;
+      const INCREMENT = 100;
+
+      const integralJs = function (
+        lowerLimit,
+        upperLimit,
+        f = (x) => Math.sin(x) + 1,
+        n = 10
+      ) {
+        let result1 = 0;
+        let result2 = 0;
+
+        while (
+          Math.abs(result2 - result1) > EPSILON ||
+          (!result1 && !result2)
+        ) {
+          let perWidth = Math.abs(upperLimit - lowerLimit) / n;
+          let perHeight = (f(lowerLimit) + f(upperLimit)) / 2;
+          let middleVariable;
+
+          for (let i = 1; i < n; i++) {
+            middleVariable = lowerLimit + i * perWidth;
+            perHeight += f(middleVariable);
+          }
+          result1 = perWidth * perHeight;
+          n += INCREMENT;
+          perWidth = Math.abs(upperLimit - lowerLimit) / n;
+          perHeight = (f(lowerLimit) + f(upperLimit)) / 2;
+          for (let i = 1; i < n; i++) {
+            middleVariable = lowerLimit + i * perWidth;
+            perHeight += f(middleVariable);
+          }
+          result2 = perWidth * perHeight;
+          n += INCREMENT;
+        }
+
+        return result2;
+      };
+
+      const date2 = Date.now();
+      for (let index = 2; index < 1003; index++) {
+        integralJs(1, index);
+      }
+
+      console.log(Date.now() - date2);
+    });
+  </script>
+</html>
